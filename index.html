@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0a5a33" />
+    <title>Goa God Islands</title>
+    <style>
+      /* Boot screen: painted instantly, before any script runs. Layered Goan poster: green, yellow, pink. */
+      #boot {
+        --g: #0b6236; --g-dark: #053a1f; --y: #ffe600; --pink: #ff1fb4; --ink: #0d2a18; --px: 0; --py: 0;
+        --mono: 'Consolas', 'Lucida Console', ui-monospace, 'Courier New', monospace;
+        --serif: 'Bodoni MT', 'Bodoni 72', 'Didot', 'Playfair Display', 'Times New Roman', serif;
+        position: fixed; inset: 0; z-index: 50; overflow: hidden; color: var(--y);
+        background: radial-gradient(ellipse 90% 70% at 50% 78%, #1d9a52 0%, #11743f 30%, var(--g) 55%, var(--g-dark) 100%);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+      }
+      #boot.gone { opacity: 0; transform: scale(1.05); pointer-events: none; }
+      #boot .layer { position: absolute; left: 0; right: 0; transition: transform 0.25s ease-out; will-change: transform; }
+
+      /* Light: slow god rays and a warm glow rising from the sun. */
+      #boot .rays {
+        position: absolute; left: 50%; bottom: -60vmax; width: 200vmax; height: 200vmax; margin-left: -100vmax; border-radius: 50%;
+        background: repeating-conic-gradient(from 0deg, rgba(255, 236, 80, 0.13) 0deg 6deg, rgba(255, 236, 80, 0) 6deg 18deg);
+        -webkit-mask: radial-gradient(circle, #000 8%, transparent 46%); mask: radial-gradient(circle, #000 8%, transparent 46%);
+        animation: boot-spin 90s linear infinite;
+      }
+      @keyframes boot-spin { to { transform: rotate(360deg); } }
+      #boot .glow { position: absolute; left: 50%; bottom: 4vh; width: 90vmin; height: 90vmin; margin-left: -45vmin; border-radius: 50%; background: radial-gradient(circle, rgba(255, 240, 120, 0.55), rgba(255, 220, 60, 0.15) 40%, transparent 65%); animation: boot-breathe 5s ease-in-out infinite alternate; }
+      @keyframes boot-breathe { to { transform: scale(1.08); opacity: 0.85; } }
+      #boot .sun { position: absolute; left: 50%; bottom: 10vh; width: min(38vmin, 340px); aspect-ratio: 1; transform: translateX(-50%); border-radius: 50%;
+        background: radial-gradient(circle at 38% 32%, #fffbd0 0%, #fff27a 22%, var(--y) 55%, #ffc400 100%); box-shadow: 0 0 60px 12px rgba(255, 230, 0, 0.45), inset -14px -18px 0 rgba(255, 170, 0, 0.35);
+        animation: boot-sunrise 1.6s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
+      @keyframes boot-sunrise { from { transform: translate(-50%, 40%); opacity: 0.4; } }
+
+      /* The god, floating in front of the sun on a cloud. */
+      #boot .god { position: absolute; left: 50%; bottom: 12vh; width: min(30vmin, 260px); margin-left: calc(min(30vmin, 260px) / -2); animation: boot-float 4s ease-in-out infinite alternate, boot-descend 1.8s cubic-bezier(0.2, 0.8, 0.3, 1) 0.4s both; filter: drop-shadow(0 10px 18px rgba(5, 40, 20, 0.45)); }
+      @keyframes boot-float { to { transform: translateY(-10px); } }
+      @keyframes boot-descend { from { opacity: 0; translate: 0 -30vh; } }
+      #boot .halo { transform-origin: 130px 58px; animation: boot-halo 3s ease-in-out infinite alternate; }
+      @keyframes boot-halo { to { transform: scale(1.08); opacity: 0.8; } }
+
+      /* Hills: three depths of Goan coast, hazier the further away. */
+      #boot .hills { bottom: 0; height: 30vh; }
+      #boot .hills svg { position: absolute; left: -5%; width: 110%; bottom: 0; }
+      #boot .far { height: 26vh; } #boot .mid { height: 20vh; } #boot .near { height: 13vh; }
+
+      /* Foreground palms and drifting sparkles. */
+      #boot .palm { position: absolute; bottom: -1vh; width: min(340px, 30vw); filter: drop-shadow(6px 8px 0 rgba(0, 0, 0, 0.18)); }
+      #boot .palm.l { left: -3vw; transform-origin: bottom left; animation: boot-sway 5s ease-in-out infinite alternate; }
+      #boot .palm.r { right: -3vw; transform-origin: bottom right; animation: boot-sway-r 6s ease-in-out infinite alternate; }
+      @keyframes boot-sway { to { transform: rotate(1.8deg); } }
+      @keyframes boot-sway-r { to { transform: rotate(-1.8deg); } }
+      #boot .spark { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #fff7a0; box-shadow: 0 0 10px 2px rgba(255, 240, 120, 0.8); opacity: 0; animation: boot-spark 7s linear infinite; }
+      @keyframes boot-spark { 10% { opacity: 1; } 80% { opacity: 0.8; } to { opacity: 0; transform: translate(var(--dx, 20px), -55vh) scale(0.4); } }
+      #boot .vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0, 20, 8, 0.55) 100%); }
+
+      /* Type and controls. */
+      #boot .top { position: absolute; top: 4vh; left: 4vw; right: 4vw; display: flex; align-items: flex-start; justify-content: space-between; z-index: 2; }
+      #boot .mark { display: flex; flex-direction: column; gap: 2px; animation: boot-fade 0.8s ease both; }
+      #boot .mark b { font: 900 30px 'Nirmala UI', 'Mangal', 'Kohinoor Devanagari', sans-serif; color: var(--y); transform: rotate(-4deg); text-shadow: 2px 2px 0 var(--ink); line-height: 1; }
+      #boot .mark span, #boot .ver { font: 700 12px var(--mono); letter-spacing: 0.32em; }
+      #boot .ver { color: rgba(255, 255, 255, 0.8); margin-top: 8px; }
+      #boot .card { position: absolute; left: 0; right: 0; top: clamp(80px, 15vh, 200px); display: flex; flex-direction: column; align-items: center; z-index: 2; }
+      #boot .title { position: relative; display: flex; flex-direction: column; align-items: center; }
+      #boot h1 {
+        margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(36px, 8.4vw, 150px); line-height: 1; white-space: nowrap; letter-spacing: -0.005em;
+        color: var(--y); text-align: center; transform: scaleY(1.45); transform-origin: top center;
+        /* Extruded 3D lettering: a stack of deepening green layers and a soft cast shadow. */
+        text-shadow: 1px 1px 0 #d8b800, 2px 2px 0 #b89a00, 3px 3px 0 #0f4a26, 4px 4px 0 #0d4322, 5px 5px 0 #0b3c1e, 6px 6px 0 #09351a, 7px 7px 0 #072e16, 9px 12px 18px rgba(0, 20, 8, 0.55), 0 0 40px rgba(255, 230, 0, 0.25);
+        animation: boot-rise 0.9s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
+      }
+      @keyframes boot-rise { from { opacity: 0; transform: scaleY(1.45) translateY(30px); } }
+      @keyframes boot-fade { from { opacity: 0; } }
+      #boot .sticker {
+        position: absolute; left: 30%; top: 6%; transform: rotate(-8deg); font: 900 clamp(34px, 6.5vw, 96px)/1 'Nirmala UI', 'Mangal', 'Kohinoor Devanagari', sans-serif;
+        color: var(--pink); -webkit-text-stroke: 3px #fff; paint-order: stroke fill; text-shadow: 4px 6px 0 rgba(13, 42, 24, 0.6);
+        animation: boot-stick 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.6) 0.7s both, boot-wobble 3.5s ease-in-out 1.4s infinite alternate;
+      }
+      @keyframes boot-stick { from { opacity: 0; transform: rotate(-30deg) scale(2.2); } }
+      @keyframes boot-wobble { to { transform: rotate(-4deg) scale(1.04); } }
+      #boot .tags { display: flex; justify-content: space-between; gap: 24px; width: min(1400px, 88vw); margin-top: clamp(40px, 7vw, 120px); font: 700 clamp(12px, 1.4vw, 20px) var(--mono); letter-spacing: 0.22em; text-shadow: 2px 2px 0 var(--ink); animation: boot-fade 0.8s 0.5s both; }
+      #boot .play-area { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: clamp(16px, 3vh, 34px); min-height: 92px; }
+      #boot .bar { width: min(320px, 70vw); height: 8px; background: rgba(0, 0, 0, 0.3); border: 2px solid var(--y); overflow: hidden; }
+      #boot .fill { height: 100%; width: 100%; transform-origin: left; transform: scaleX(0.04); background: var(--y); animation: boot-load 2.2s cubic-bezier(0.1, 0.7, 0.3, 1) 0.3s forwards; }
+      @keyframes boot-load { to { transform: scaleX(0.9); } }
+      #boot.ready .fill { animation: none; transform: scaleX(1); }
+      #boot .status { font: 700 12px var(--mono); letter-spacing: 0.2em; color: rgba(255, 255, 255, 0.85); text-transform: uppercase; }
+      #boot .go {
+        display: none; padding: 12px 56px 10px; font: 400 clamp(30px, 3.4vw, 46px)/1 var(--serif); letter-spacing: 0.06em; color: var(--g); cursor: pointer;
+        background: linear-gradient(#fff36a, var(--y) 55%, #f2c800); border: none; outline: 4px dashed var(--pink); outline-offset: 5px;
+        box-shadow: 0 6px 0 #9a7a00, 0 12px 22px rgba(0, 20, 8, 0.45), 0 0 40px rgba(255, 230, 0, 0.45); transition: transform 0.12s, box-shadow 0.12s;
+      }
+      #boot .go:hover { transform: translateY(-3px); box-shadow: 0 9px 0 #9a7a00, 0 16px 26px rgba(0, 20, 8, 0.5), 0 0 54px rgba(255, 230, 0, 0.7); }
+      #boot .go:active { transform: translateY(4px); box-shadow: 0 2px 0 #9a7a00, 0 6px 12px rgba(0, 20, 8, 0.4); }
+      #boot.ready .go { display: block; animation: boot-pop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.5) both; }
+      #boot.ready .bar, #boot.ready .status { display: none; }
+      @keyframes boot-pop { from { opacity: 0; transform: scale(0.7); } }
+      #boot .pill { position: absolute; left: 3vw; bottom: 4vh; z-index: 2; display: flex; align-items: center; gap: 10px; padding: 9px 18px; border-radius: 999px; background: rgba(4, 30, 16, 0.75); border: 2px solid rgba(255, 255, 255, 0.25); font: 700 12px var(--mono); letter-spacing: 0.14em; color: #fff; backdrop-filter: blur(4px); }
+      #boot .pill i { width: 9px; height: 9px; border-radius: 50%; background: var(--y); box-shadow: 0 0 10px var(--y); }
+      #boot .hint { position: absolute; right: 3vw; bottom: 4.5vh; z-index: 2; font: 700 12px var(--mono); letter-spacing: 0.12em; color: rgba(255, 255, 255, 0.9); text-shadow: 1px 1px 0 var(--ink); }
+      @media (max-width: 760px) { #boot .tags { flex-direction: column; align-items: center; gap: 6px; text-align: center; } #boot .pill, #boot .hint { display: none; } }
+      @media (prefers-reduced-motion: reduce) { #boot * { animation-duration: 0.001s !important; } #boot .layer { transition: none; } }
+    </style>
+  </head>
+  <body>
+    <div id="boot">
+      <div class="layer" style="inset: 0; transform: translate(calc(var(--px) * -6px), calc(var(--py) * -4px))"><div class="rays"></div><div class="glow"></div></div>
+      <div class="layer" style="inset: 0; transform: translate(calc(var(--px) * -10px), calc(var(--py) * -6px))"><div class="sun"></div></div>
+      <div class="layer hills" style="transform: translateX(calc(var(--px) * -14px))">
+        <svg class="far" viewBox="0 0 1200 260" preserveAspectRatio="none" aria-hidden="true"><path d="M0 150 C120 90 220 120 320 100 C430 78 520 130 640 110 C760 90 860 60 980 96 C1080 126 1150 100 1200 110 L1200 260 L0 260 Z" fill="#2a8a52" opacity="0.75"/></svg>
+      </div>
+      <div class="layer" style="inset: 0; transform: translate(calc(var(--px) * -18px), calc(var(--py) * -10px))">
+        <svg class="god" viewBox="0 0 260 300" aria-hidden="true">
+          <circle class="halo" cx="130" cy="58" r="36" fill="none" stroke="#fff7b0" stroke-width="7" opacity="0.95"/>
+          <path d="M130 96 L92 230 L168 230 Z" fill="#ff9a2e" stroke="#0d2a18" stroke-width="5" stroke-linejoin="round"/>
+          <path d="M130 100 L110 230 L150 230 Z" fill="#fff6e0" stroke="#0d2a18" stroke-width="4" stroke-linejoin="round"/>
+          <path d="M112 128 C90 104 70 80 60 52" stroke="#0d2a18" stroke-width="15" fill="none" stroke-linecap="round"/>
+          <path d="M112 128 C90 104 70 80 60 52" stroke="#f0b27a" stroke-width="9" fill="none" stroke-linecap="round"/>
+          <path d="M148 128 C170 104 190 80 200 52" stroke="#0d2a18" stroke-width="15" fill="none" stroke-linecap="round"/>
+          <path d="M148 128 C170 104 190 80 200 52" stroke="#f0b27a" stroke-width="9" fill="none" stroke-linecap="round"/>
+          <circle cx="130" cy="74" r="24" fill="#f0b27a" stroke="#0d2a18" stroke-width="5"/>
+          <path d="M108 66 C112 46 148 46 152 66 C142 58 118 58 108 66 Z" fill="#2a1a10"/>
+          <circle cx="121" cy="76" r="3" fill="#0d2a18"/><circle cx="139" cy="76" r="3" fill="#0d2a18"/>
+          <path d="M122 86 C127 91 133 91 138 86" stroke="#0d2a18" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M30 252 C28 228 54 216 74 224 C80 200 116 194 130 214 C146 194 186 200 190 226 C212 216 236 230 230 254 C236 276 206 286 188 278 C170 292 140 292 128 280 C112 294 78 292 70 278 C48 288 22 274 30 252 Z" fill="#fffef6" stroke="#0d2a18" stroke-width="5" stroke-linejoin="round"/>
+          <path d="M60 262 C80 270 110 270 130 262" stroke="#d8e4ec" stroke-width="5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="layer hills" style="transform: translateX(calc(var(--px) * -24px))">
+        <svg class="mid" viewBox="0 0 1200 200" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0 120 C140 70 260 110 380 96 C520 80 600 40 760 70 C900 96 1000 60 1200 90 L1200 200 L0 200 Z" fill="#11693a"/>
+        </svg>
+      </div>
+      <div class="layer hills" style="transform: translateX(calc(var(--px) * -34px))">
+        <svg class="near" viewBox="0 0 1200 130" preserveAspectRatio="none" aria-hidden="true"><path d="M0 70 C180 30 320 80 480 60 C640 40 760 90 920 62 C1040 42 1120 60 1200 50 L1200 130 L0 130 Z" fill="#064a26"/></svg>
+      </div>
+      <div class="layer" style="inset: 0; transform: translate(calc(var(--px) * -44px), calc(var(--py) * -14px))">
+        <svg class="palm l" viewBox="0 0 300 300" aria-hidden="true">
+          <path d="M20 300 C40 230 70 170 112 128" stroke="#c9a36a" stroke-width="13" fill="none" stroke-linecap="round"/>
+          <path d="M20 300 C40 230 70 170 112 128" stroke="#a37e4a" stroke-width="4" fill="none" stroke-dasharray="6 10"/>
+          <path d="M112 128 C80 60 40 40 10 30 C50 70 70 100 104 134 Z" fill="#1fbf6a" stroke="#0d2a18" stroke-width="3"/>
+          <path d="M112 128 C150 70 200 60 250 66 C200 80 160 100 120 138 Z" fill="#22d17a" stroke="#0d2a18" stroke-width="3"/>
+          <path d="M112 128 C70 110 30 120 0 140 C40 140 70 136 106 140 Z" fill="#17a85c" stroke="#0d2a18" stroke-width="3"/>
+          <path d="M114 130 C170 130 210 160 236 200 C200 176 160 156 116 140 Z" fill="#17a85c" stroke="#0d2a18" stroke-width="3"/>
+          <circle cx="108" cy="134" r="7" fill="#7a3b1a"/><circle cx="120" cy="132" r="7" fill="#7a3b1a"/>
+        </svg>
+        <svg class="palm r" viewBox="0 0 300 300" aria-hidden="true"><g transform="translate(300 0) scale(-1 1)">
+          <path d="M20 300 C40 230 70 170 112 128" stroke="#c9a36a" stroke-width="13" fill="none" stroke-linecap="round"/>
+          <path d="M20 300 C40 230 70 170 112 128" stroke="#a37e4a" stroke-width="4" fill="none" stroke-dasharray="6 10"/>
+          <path d="M112 128 C80 60 40 40 10 30 C50 70 70 100 104 134 Z" fill="#1fbf6a" stroke="#0d2a18" stroke-width="3"/>
+          <path d="M112 128 C150 70 200 60 250 66 C200 80 160 100 120 138 Z" fill="#22d17a" stroke="#0d2a18" stroke-width="3"/>
+          <path d="M114 130 C170 130 210 160 236 200 C200 176 160 156 116 140 Z" fill="#17a85c" stroke="#0d2a18" stroke-width="3"/>
+          <circle cx="108" cy="134" r="7" fill="#7a3b1a"/><circle cx="120" cy="132" r="7" fill="#7a3b1a"/>
+        </g></svg>
+      </div>
+      <div class="spark" style="left: 38%; bottom: 20%; animation-delay: 0s; --dx: -30px"></div>
+      <div class="spark" style="left: 46%; bottom: 26%; animation-delay: 1.4s; --dx: 20px"></div>
+      <div class="spark" style="left: 55%; bottom: 22%; animation-delay: 2.6s; --dx: 40px"></div>
+      <div class="spark" style="left: 61%; bottom: 18%; animation-delay: 4s; --dx: -16px"></div>
+      <div class="spark" style="left: 42%; bottom: 15%; animation-delay: 5.2s; --dx: 26px"></div>
+      <div class="spark" style="left: 52%; bottom: 30%; animation-delay: 3.3s; --dx: -36px"></div>
+      <div class="vignette"></div>
+      <div class="top">
+        <div class="mark"><b>गोंय</b><span>GOA · GOD</span></div>
+        <div class="ver">ISLANDS</div>
+      </div>
+      <div class="card" style="transform: translate(calc(var(--px) * 6px), calc(var(--py) * 4px))">
+        <div class="title">
+          <h1>GOA GOD ISLANDS</h1>
+          <div class="sticker">गोंय</div>
+        </div>
+        <div class="tags"><span>GOA, INDIA · YOUR VOICE IS THE WEAPON</span><span>SPEAK, AND GOA LISTENS</span></div>
+        <div class="play-area">
+          <div class="bar"><div class="fill"></div></div>
+          <div class="status">Raising the island from the sea…</div>
+          <button class="go" type="button">PLAY</button>
+        </div>
+      </div>
+      <div class="pill"><i></i>VOICE · KEYBOARD · TOUCH ✓</div>
+      <div class="hint">Press Enter · sound on 🎧</div>
+    </div>
+    <script>
+      // Gentle parallax: layers drift with the pointer for depth (inline so it runs before the game loads).
+      (function () {
+        var b = document.getElementById('boot');
+        if (!b || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        addEventListener('pointermove', function (e) {
+          b.style.setProperty('--px', ((e.clientX / innerWidth) * 2 - 1).toFixed(3));
+          b.style.setProperty('--py', ((e.clientY / innerHeight) * 2 - 1).toFixed(3));
+        });
+      })();
+    </script>
+    <div id="app">
+      <div id="stage"></div>
+      <div id="ui"></div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
